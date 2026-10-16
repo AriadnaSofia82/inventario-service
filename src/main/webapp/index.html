@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario Service</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px auto;
+            padding: 0 20px;
+            max-width: 950px;
+            line-height: 1.6;
+            color: #1f2937;
+        }
+
+        h1, h2 {
+            color: #1d4ed8;
+        }
+
+        code {
+            background: #f3f4f6;
+            padding: 3px 6px;
+            border-radius: 4px;
+            overflow-wrap: anywhere;
+        }
+
+        li {
+            margin: 12px 0;
+        }
+
+        .nota {
+            background: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 12px 16px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+<h1>Inventario Service</h1>
+
+<p>
+    API REST académica desarrollada con Jakarta EE 11,
+    WildFly 41, Java 21 y SQL Server.
+</p>
+
+<h2>Productos</h2>
+<ul>
+    <li><code>GET /api/inventario/productos</code> — Listar productos.</li>
+    <li><code>GET /api/inventario/productos/{id}</code> — Consultar un producto por ID.</li>
+    <li><code>GET /api/inventario/productos/codigo/{codigo}</code> — Consultar por código.</li>
+</ul>
+
+<h2>Consulta de stock</h2>
+<ul>
+    <li><code>GET /api/inventario/productos/{id}/stock</code> — Consultar stock por ID.</li>
+    <li><code>GET /api/inventario/productos/codigo/{codigo}/stock</code> — Consultar stock por código.</li>
+</ul>
+
+<h2>Operaciones de inventario</h2>
+<ul>
+    <li><code>POST /api/inventario/productos/{id}/reservas</code> — Reservar stock por ID.</li>
+    <li><code>POST /api/inventario/productos/{id}/devoluciones</code> — Devolver stock por ID.</li>
+    <li><code>POST /api/inventario/productos/codigo/{codigo}/reservas</code> — Reservar stock por código.</li>
+    <li><code>POST /api/inventario/productos/codigo/{codigo}/devoluciones</code> — Devolver stock por código.</li>
+</ul>
+
+<div class="nota">
+    <strong>Pruebas de la API:</strong>
+    utiliza el archivo
+    <code>requests/inventario-service.http</code>
+    para enviar solicitudes y comprobar las respuestas.
+</div>
+</body>
+</html>

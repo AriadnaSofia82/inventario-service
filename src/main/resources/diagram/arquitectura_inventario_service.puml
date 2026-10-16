@@ -1,0 +1,46 @@
+@startuml
+title Arquitectura de Inventario Service
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+actor "Sistema de Pedidos\n/ Postman" as client
+
+package "Capa de presentación - API REST" {
+    component "ProductoResource\nJakarta REST" as api
+    component "Exception Mappers\nManejo de errores HTTP" as mapper
+}
+
+package "Capa de negocio" {
+    component "InventarioService\n@Stateless" as service
+    component "InventarioException\nReglas y errores de negocio" as exception
+}
+
+package "Capa de persistencia" {
+    component "EntityManager\nJakarta Persistence" as jpa
+    database "SQL Server\nInventarioDB" as db
+}
+
+client --> api : HTTP / JSON
+api --> service : Invocación mediante @EJB
+service --> jpa : Operaciones JPA
+jpa --> db : JDBC / InventarioDS
+
+api ..> mapper : Excepciones
+service ..> exception : Errores de negocio
+mapper ..> client : Respuesta HTTP / JSON
+
+note right of service
+  Consultar productos y stock
+  Reservar unidades
+  Devolver unidades
+  Controlar transacciones
+end note
+
+note bottom of db
+  Persistencia de productos
+  y control de concurrencia
+end note
+
+@enduml

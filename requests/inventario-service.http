@@ -1,0 +1,119 @@
+
+@baseUrl = http://localhost:8082/inventario-service/api/inventario
+@codigo = LAP-001
+@id = 1
+
+### 1. GET - Listar productos
+GET {{baseUrl}}/productos
+Accept: application/json
+
+[
+    {
+        "codigo": "LAP-001",
+        "id": 1,
+        "nombre": "Laptop",
+        "precio": 2500.00,
+        "stock": 10,
+        "version": 0
+    },
+    {
+        "codigo": "MON-001",
+        "id": 2,
+        "nombre": "Monitor",
+        "precio": 850.00,
+        "stock": 20,
+        "version": 0
+    },
+    {
+        "codigo": "TEC-001",
+        "id": 3,
+        "nombre": "Teclado",
+        "precio": 120.00,
+        "stock": 30,
+        "version": 0
+    }
+]
+
+### 2. GET - Obtener producto por ID
+GET {{baseUrl}}/productos/1
+Accept: application/json
+
+{
+    "codigo": "LAP-001",
+    "id": 1,
+    "nombre": "Laptop",
+    "precio": 2500.00,
+    "stock": 10,
+    "version": 0
+}
+
+### 3. GET - Consultar stock por ID
+GET {{baseUrl}}/productos/1/stock
+Accept: application/json
+
+{
+    "codigo": "LAP-001",
+    "disponible": true,
+    "productoId": 1,
+    "stock": 10
+}
+
+### 4. GET - Obtener producto por código
+GET {{baseUrl}}/productos/codigo/MON-001
+Accept: application/json
+
+{
+    "codigo": "MON-001",
+    "id": 2,
+    "nombre": "Monitor",
+    "precio": 850.00,
+    "stock": 20,
+    "version": 0
+}
+
+### 5. GET - Consultar stock por código
+GET {{baseUrl}}/productos/codigo/{{codigo}}/stock
+Accept: application/json
+
+{
+    "codigo": "MON-001",
+    "disponible": true,
+    "productoId": 2,
+    "stock": 20
+}
+
+### 6. POST - Reservar stock por ID
+POST {{baseUrl}}/productos/1/reservas
+Content-Type: application/json
+Accept: application/json
+
+{
+  "cantidad": 2
+}
+
+### 7. POST - Reservar stock por código
+POST {{baseUrl}}/productos/codigo/TEC-001/reservas
+Content-Type: application/json
+Accept: application/json
+
+{
+  "cantidad": 2
+}
+
+### 8. POST - Devolver stock por código
+POST {{baseUrl}}/productos/codigo/TEC-001/devoluciones
+Content-Type: application/json
+Accept: application/json
+
+{
+  "cantidad": 2
+}
+
+### 9. POST - Devolver stock por ID
+POST {{baseUrl}}/productos/1/devoluciones
+Content-Type: application/json
+Accept: application/json
+
+{
+  "cantidad": 1
+}

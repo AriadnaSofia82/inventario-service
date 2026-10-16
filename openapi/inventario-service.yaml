@@ -1,0 +1,304 @@
+  openapi: 3.0.3
+
+  info:
+    title: Inventario Service
+    version: 1.4.0
+    description: >
+      API REST académica para consultar productos, precios y stock,
+      reservar unidades y registrar devoluciones de inventario.
+
+  servers:
+    - url: http://localhost:8082/inventario-service/api
+      description: Servidor local WildFly
+
+  tags:
+    - name: Productos
+      description: Consultas del catálogo de productos
+    - name: Stock
+      description: Consultas de disponibilidad
+    - name: Operaciones de inventario
+      description: Reservas y devoluciones de stock
+
+  paths:
+    /inventario/productos:
+      get:
+        tags: [Productos]
+        summary: Lista todos los productos
+        responses:
+          '200':
+            description: Lista obtenida correctamente
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ProductoResponse'
+
+    /inventario/productos/{id}:
+      get:
+        tags: [Productos]
+        summary: Obtiene un producto por ID
+        parameters:
+          - $ref: '#/components/parameters/ProductoId'
+        responses:
+          '200':
+            description: Producto encontrado
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ProductoResponse'
+          '404':
+            description: Producto no encontrado
+
+    /inventario/productos/codigo/{codigo}:
+      get:
+        tags: [Productos]
+        summary: Obtiene un producto por código
+        parameters:
+          - $ref: '#/components/parameters/CodigoProducto'
+        responses:
+          '200':
+            description: Producto encontrado
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ProductoResponse'
+          '404':
+            description: Producto no encontrado
+
+    /inventario/productos/{id}/stock:
+      get:
+        tags: [Stock]
+        summary: Consulta el stock por ID
+        parameters:
+          - $ref: '#/components/parameters/ProductoId'
+        responses:
+          '200':
+            description: Stock consultado correctamente
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/StockResponse'
+          '404':
+            description: Producto no encontrado
+
+    /inventario/productos/codigo/{codigo}/stock:
+      get:
+        tags: [Stock]
+        summary: Consulta el stock por código
+        parameters:
+          - $ref: '#/components/parameters/CodigoProducto'
+        responses:
+          '200':
+            description: Stock consultado correctamente
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/StockResponse'
+          '404':
+            description: Producto no encontrado
+
+    /inventario/productos/{id}/reservas:
+      post:
+        tags: [Operaciones de inventario]
+        summary: Reserva stock por ID
+        parameters:
+          - $ref: '#/components/parameters/ProductoId'
+        requestBody:
+          $ref: '#/components/requestBodies/ReservaStock'
+        responses:
+          '200':
+            description: Stock reservado correctamente
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ReservaStockResponse'
+          '400':
+            description: Datos inválidos
+          '404':
+            description: Producto no encontrado
+          '409':
+            description: Stock insuficiente o conflicto de concurrencia
+
+    /inventario/productos/{id}/devoluciones:
+      post:
+        tags: [Operaciones de inventario]
+        summary: Registra una devolución de stock por ID
+        parameters:
+          - $ref: '#/components/parameters/ProductoId'
+        requestBody:
+          $ref: '#/components/requestBodies/ReservaStock'
+        responses:
+          '200':
+            description: Devolución registrada correctamente
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ReservaStockResponse'
+          '400':
+            description: Datos inválidos
+          '404':
+            description: Producto no encontrado
+          '409':
+            description: Conflicto de concurrencia
+
+    /inventario/productos/codigo/{codigo}/reservas:
+      post:
+        tags: [Operaciones de inventario]
+        summary: Reserva stock por código de producto
+        parameters:
+          - $ref: '#/components/parameters/CodigoProducto'
+        requestBody:
+          $ref: '#/components/requestBodies/ReservaStock'
+        responses:
+          '200':
+            description: Stock reservado correctamente
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ReservaStockResponse'
+          '400':
+            description: Datos inválidos
+          '404':
+            description: Producto no encontrado
+          '409':
+            description: Stock insuficiente o conflicto de concurrencia
+
+    /inventario/productos/codigo/{codigo}/devoluciones:
+      post:
+        tags: [Operaciones de inventario]
+        summary: Registra una devolución de stock por código
+        parameters:
+          - $ref: '#/components/parameters/CodigoProducto'
+        requestBody:
+          $ref: '#/components/requestBodies/ReservaStock'
+        responses:
+          '200':
+            description: Devolución registrada correctamente
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ReservaStockResponse'
+          '400':
+            description: Datos inválidos
+          '404':
+            description: Producto no encontrado
+          '409':
+            description: Conflicto de concurrencia
+
+  components:
+    parameters:
+      ProductoId:
+        name: id
+        in: path
+        required: true
+        description: Identificador del producto
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+
+      CodigoProducto:
+        name: codigo
+        in: path
+        required: true
+        description: Código único del producto
+        schema:
+          type: string
+          maxLength: 30
+
+    requestBodies:
+      ReservaStock:
+        required: true
+        description: Cantidad de unidades para reservar o devolver
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservaStockRequest'
+            example:
+              cantidad: 2
+
+    schemas:
+      ProductoResponse:
+        type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+          codigo:
+            type: string
+          nombre:
+            type: string
+          precio:
+            type: number
+            description: Precio del producto
+            example: 2500.00
+          stock:
+            type: integer
+          version:
+            type: integer
+            format: int64
+
+      StockResponse:
+        type: object
+        properties:
+          productoId:
+            type: integer
+            format: int64
+          codigo:
+            type: string
+          stock:
+            type: integer
+          disponible:
+            type: boolean
+
+      ReservaStockRequest:
+        type: object
+        required:
+          - cantidad
+        properties:
+          cantidad:
+            type: integer
+            minimum: 1
+            description: Número de unidades solicitadas
+
+      ReservaStockResponse:
+        type: object
+        properties:
+          productoId:
+            type: integer
+            format: int64
+          codigo:
+            type: string
+          nombre:
+            type: string
+          precio:
+            type: number
+            description: Precio unitario del producto
+          operacion:
+            type: string
+            enum:
+              - RESERVA
+              - DEVOLUCION
+          cantidad:
+            type: integer
+          stockActual:
+            type: integer
+          version:
+            type: integer
+            format: int64
+
+      ApiError:
+        type: object
+        properties:
+          status:
+            type: integer
+          error:
+            type: string
+          message:
+            type: string
+          path:
+            type: string
+          timestamp:
+            type: string
+            format: date-time
